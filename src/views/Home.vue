@@ -4,100 +4,100 @@
 
             <div class="col-sm-12">
                 <div id="generator">
-                    <ui-text-field v-model="code" label="编码" />
-                    <div>
-                        <ui-raised-button label="生成条形码" primary @click="generateBarcode" />
-                    </div>
+
                     <div id="submit">
                     </div>
                     <div id="barcodeTarget" class="barcodeTarget"></div>
-                    <canvas id="canvasTarget" width="150" height="150"></canvas>
+                    <canvas id="canvasTarget" width="320" height="320"></canvas>
 
-                    <div id="config row">
-                        <div class="col-sm-4">
+                    <div class="setting-box">
+                        <ui-tabs class="tab" :value="activeTab" @change="handleTabChange">
+                            <ui-tab value="tab0" title="预览"/>
+                            <ui-tab value="tab1" title="类型"/>
+                            <ui-tab value="tab2" title="混合"/>
+                            <ui-tab value="tab3" title="格式"/>
+                        </ui-tabs>
+                        <div v-if="activeTab === 'tab0'">
                             <div class="config">
-                                <div class="title">类型</div>
-                                <input type="radio" name="btype" id="ean8" value="ean8" checked="checked"><label for="ean8">EAN 8</label><br />
-                                <input type="radio" name="btype" id="ean13" value="ean13"><label for="ean13">EAN 13</label><br />
-                                <input type="radio" name="btype" id="std25" value="std25"><label for="std25">standard 2 of 5 (industrial)</label><br />
-                                <input type="radio" name="btype" id="int25" value="int25"><label for="int25">interleaved 2 of 5</label><br />
-                                <input type="radio" name="btype" id="code11" value="code11"><label for="code11">code 11</label><br />
-                                <input type="radio" name="btype" id="code39" value="code39"><label for="code39">code 39</label><br />
-                                <input type="radio" name="btype" id="code93" value="code93"><label for="code93">code 93</label><br />
-                                <input type="radio" name="btype" id="code128" value="code128"><label for="code128">code 128</label><br />
-                                <input type="radio" name="btype" id="codabar" value="codabar"><label for="codabar">codabar</label><br />
-                                <input type="radio" name="btype" id="msi" value="msi"><label for="msi">MSI</label><br />
-                                <input type="radio" name="btype" id="datamatrix" value="datamatrix"><label for="datamatrix">Data Matrix</label><br /><br />
+                                <ui-text-field v-model="code" label="编码" />
+                                <div>
+                                    <ui-raised-button label="生成条形码" primary @click="generateBarcode" />
+                                </div>
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div v-if="activeTab === 'tab1'">
                             <div class="config">
-                                <div class="title">混合</div>
+                                <ul>
+                                    <li v-for="t in types">
+                                        <ui-radio class="radio" v-model="type" :label="t.text" name="group" :nativeValue="t.name"/>
+                                    </li>
+                                </ul>
+
+                            </div>
+                        </div>
+                        <div v-if="activeTab === 'tab2'">
+                            <div class="config">
                                 <div class="form-horizontal">
                                     <div class="form-group">
                                         <div class="control-label col-sm-4">背景颜色：</div>
                                         <div class="col-sm-8">
-                                            <input class="form-control" type="text" id="bgColor" value="#FFFFFF" size="7">
+                                            <input class="form-control" v-model="options.bgColor" type="text" size="7">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="control-label col-sm-4">条码颜色：</div>
                                         <div class="col-sm-8">
-                                            <input class="form-control" type="text" id="color" value="#000000" size="7">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="control-label col-sm-4">线条颜色：</div>
-                                        <div class="col-sm-8">
-                                            <input class="form-control" type="text" id="color" value="#000000" size="7">
+                                            <input class="form-control" v-model="options.color" type="text" size="7">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="control-label col-sm-4">线条宽度：</div>
                                         <div class="col-sm-8">
-                                            <input class="form-control" type="text" id="barWidth" value="1" size="3">
+                                            <input class="form-control" v-model.number="options.barWidth" type="text" size="3">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="control-label col-sm-4">条码高度：</div>
                                         <div class="col-sm-8">
-                                            <input class="form-control" type="text" id="barHeight" value="50" size="3">
+                                            <input class="form-control" v-model.number="options.barHeight" type="text" size="3">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="control-label col-sm-4">Module Size:</div>
                                         <div class="col-sm-8">
-                                            <input type="text" id="moduleSize" value="5" size="3">
+                                            <input v-model.number="options.moduleSize" type="text" size="3">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="control-label col-sm-4">Quiet Zone Modules:</div>
                                         <div class="col-sm-8">
-                                            <input type="text" id="quietZoneSize" value="1" size="3">
+                                            <input v-model.number="options.quietZoneSize" type="text" size="3">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="control-label col-sm-4">Form:</div>
                                         <div class="col-sm-8">
-                                            <input type="checkbox" name="rectangular" id="rectangular"><label for="rectangular">Rectangular</label>
+                                            <input v-model="options.rectangular" type="checkbox" name="rectangular">
+                                            <label for="rectangular">Rectangular</label>
                                         </div>
                                     </div>
 
-                                    <div id="miscCanvas">
-                                        x : <input type="text" id="posX" value="10" size="3"><br />
-                                        y : <input type="text" id="posY" value="20" size="3"><br />
+                                    <div id="miscCanvas" v-if="renderer === 'canvas'">
+                                        x : <input v-model.number="options.posX" type="text" size="3"><br />
+                                        y : <input v-model.number="options.posY" type="text" size="3"><br />
                                     </div>
                                 </div>
-
                             </div>
                         </div>
-                        <div class="col-sm-4">
+                        <div v-if="activeTab === 'tab3'">
                             <div class="config">
-                                <div class="title">格式</div>
-                                <input type="radio" id="css" name="renderer" value="css" checked="checked"><label for="css">CSS</label><br />
-                                <input type="radio" id="bmp" name="renderer" value="bmp"><label for="bmp">BMP (not usable in IE)</label><br />
-                                <input type="radio" id="svg" name="renderer" value="svg"><label for="svg">SVG (not usable in IE)</label><br />
-                                <input type="radio" id="canvas" name="renderer" value="canvas"><label for="canvas">Canvas (not usable in IE)</label><br />
+                                <ui-radio class="radio" v-model="renderer" label="CSS" name="group" nativeValue="css"/>
+                                <br>
+                                <ui-radio class="radio" v-model="renderer" label="BMP (not usable in IE)" name="group" nativeValue="bmp"/>
+                                <br>
+                                <ui-radio class="radio" v-model="renderer" label="SVG (not usable in IE)" name="group" nativeValue="svg"/>
+                                <br>
+                                <ui-radio class="radio" v-model="renderer" label="Canvas (not usable in IE)" name="group" nativeValue="canvas"/>
                             </div>
                         </div>
                     </div>
@@ -112,22 +112,116 @@
     export default {
         data () {
             return {
-                code: '12345670'
+                options: {
+                    bgColor: '#FFFFFF',
+                    color: '#000000',
+                    barWidth: 1,
+                    barHeight: 50,
+                    moduleSize: 5,
+                    quietZoneSize: 1,
+                    posX: 10,
+                    posY: 20
+                },
+                code: '12345670',
+                renderer: 'canvas',
+                type: 'ean8',
+                activeTab: 'tab1',
+                types: [
+                    {
+                        name: 'ean8',
+                        text: 'EAN 8'
+                    },
+                    {
+                        name: 'ean13',
+                        text: 'EAN 13'
+                    },
+                    {
+                        name: 'std25',
+                        text: 'standard 2 of 5 (industrial)'
+                    },
+                    {
+                        name: 'int25',
+                        text: 'interleaved 2 of 5'
+                    },
+                    {
+                        name: 'code11',
+                        text: 'code 11'
+                    },
+                    {
+                        name: 'code39',
+                        text: 'code 39'
+                    },
+                    {
+                        name: 'code93',
+                        text: 'code 93'
+                    },
+                    {
+                        name: 'code128',
+                        text: 'code 128'
+                    },
+                    {
+                        name: 'codabar',
+                        text: 'codabar'
+                    },
+                    {
+                        name: 'msi',
+                        text: 'MSI'
+                    },
+                    {
+                        name: 'datamatrix',
+                        text: 'datamatrix'
+                    },
+                ]
             }
         },
         mounted() {
             this.init()
         },
         methods: {
+            handleTabChange (val) {
+                this.activeTab = val
+            },
             init() {
-                function showConfig1D() {
-                    $('.config .barcode1D').show();
-                    $('.config .barcode2D').hide();
+                // function showConfig1D() {
+                //     $('.config .barcode1D').show();
+                //     $('.config .barcode2D').hide();
+                // }
+
+                // function showConfig2D() {
+                //     $('.config .barcode1D').hide();
+                //     $('.config .barcode2D').show();
+                // }
+
+                // $('input[name=btype]').click(function () {
+                //     console.log('点击', $(this).attr('id'))
+                //     if ($(this).attr('id') == 'datamatrix') showConfig2D(); else showConfig1D();
+                // });
+                $('input[name=renderer]').click(function () {
+                    if ($(this).attr('id') == 'canvas') $('#miscCanvas').show(); else $('#miscCanvas').hide();
+                });
+                this.generateBarcode();
+            },
+            generateBarcode() {
+                var value = this.code
+
+                var quietZone = false;
+                if ($("#quietzone").is(':checked') || $("#quietzone").attr('checked')) {
+                    quietZone = true;
                 }
 
-                function showConfig2D() {
-                    $('.config .barcode1D').hide();
-                    $('.config .barcode2D').show();
+                var settings = {
+                    output: this.renderer,
+                    bgColor: this.options.bgColor,
+                    color: this.options.color,
+                    barWidth: this.options.barWidth,
+                    barHeight: this.options.barHeight,
+                    moduleSize: this.options.moduleSize,
+                    posX: this.options.posX,
+                    posY: this.options.posY,
+                    addQuietZone: this.options.quietZoneSize
+                };
+                if (this.options.rectangular) {
+                    value = {code: value, rect: true};
                 }
 
                 function clearCanvas() {
@@ -141,52 +235,57 @@
                     ctx.strokeRect(0, 0, canvas.width, canvas.height);
                 }
 
-                $('input[name=btype]').click(function () {
-                    if ($(this).attr('id') == 'datamatrix') showConfig2D(); else showConfig1D();
-                });
-                $('input[name=renderer]').click(function () {
-                    if ($(this).attr('id') == 'canvas') $('#miscCanvas').show(); else $('#miscCanvas').hide();
-                });
-                this.generateBarcode();
-            },
-            generateBarcode() {
-                var value = this.code
-                var btype = $("input[name=btype]:checked").val();
-                var renderer = $("input[name=renderer]:checked").val();
-
-                var quietZone = false;
-                if ($("#quietzone").is(':checked') || $("#quietzone").attr('checked')) {
-                    quietZone = true;
-                }
-
-                var settings = {
-                    output: renderer,
-                    bgColor: $("#bgColor").val(),
-                    color: $("#color").val(),
-                    barWidth: $("#barWidth").val(),
-                    barHeight: $("#barHeight").val(),
-                    moduleSize: $("#moduleSize").val(),
-                    posX: $("#posX").val(),
-                    posY: $("#posY").val(),
-                    addQuietZone: $("#quietZoneSize").val()
-                };
-                if ($("#rectangular").is(':checked') || $("#rectangular").attr('checked')) {
-                    value = {code: value, rect: true};
-                }
-                if (renderer == 'canvas') {
+                if (this.renderer == 'canvas') {
                     clearCanvas();
                     $("#barcodeTarget").hide();
-                    $("#canvasTarget").show().barcode(value, btype, settings);
+                    $("#canvasTarget").show().barcode(value, this.type, settings);
                 } else {
                     $("#canvasTarget").hide();
-                    $("#barcodeTarget").html("").show().barcode(value, btype, settings);
+                    $("#barcodeTarget").html("").show().barcode(value, this.type, settings);
+                }
+            }
+        },
+        watch: {
+            code() {
+                this.generateBarcode()
+            },
+            type() {
+                this.generateBarcode()
+            },
+            renderer() {
+                this.generateBarcode()
+            },
+            options: {
+                deep: true,
+                handler() {
+                    this.generateBarcode()
                 }
             }
         }
     }
 </script>
 
+<style lang="scss">
+    .tab {
+        background-color: transparent;
+        color: rgba(0,0,0,.87);
+        margin-bottom: 16px;
+        border-bottom: 1px solid rgba(0,0,0,.12);
+        .mu-tab-text {
+            color: rgba(0,0,0,.87);
+        }
+    }
+</style>
 <style lang="scss" scoped>
+    .setting-box {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 320px;
+        bottom: 0;
+        /*background-color: #f00;*/
+        border-left: 1px solid rgba(0,0,0,.12);
+    }
     .col-sm-4 {
         float: left;
     }
@@ -197,10 +296,7 @@
         margin-bottom: 10px;
     }
     .config{
-        height: 400px;
         padding: 16px;
-        margin-right: 16px;
-        border: 1px solid #000;
         overflow: auto;
     }
     .config .title{
@@ -208,9 +304,6 @@
         text-align: center;
     }
     .config .barcode2D,
-    #miscCanvas{
-        display: none;
-    }
     #submit{
         clear: both;
     }

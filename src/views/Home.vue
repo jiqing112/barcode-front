@@ -37,37 +37,20 @@
                         </div>
                         <div v-if="activeTab === 'tab2'">
                             <div class="config">
-                                <div class="form-horizontal">
-                                    <div class="form-group">
+                                 <!-- <div class="form-group">
                                         <div class="control-label col-sm-4">背景颜色：</div>
                                         <div class="col-sm-8">
                                             <input class="form-control" v-model="options.bgColor" type="text" size="7">
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="control-label col-sm-4">条码颜色：</div>
-                                        <div class="col-sm-8">
-                                            <input class="form-control" v-model="options.color" type="text" size="7">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="control-label col-sm-4">线条宽度：</div>
-                                        <div class="col-sm-8">
-                                            <input class="form-control" v-model.number="options.barWidth" type="text" size="3">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="control-label col-sm-4">条码高度：</div>
-                                        <div class="col-sm-8">
-                                            <input class="form-control" v-model.number="options.barHeight" type="text" size="3">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="control-label col-sm-4">Module Size:</div>
-                                        <div class="col-sm-8">
-                                            <input v-model.number="options.moduleSize" type="text" size="3">
-                                        </div>
-                                    </div>
+                                    </div> -->
+                                <ui-text-field v-model="options.bgColor" label="背景颜色" />
+                                <ui-text-field v-model="options.color" label="条码颜色" />
+                                <ui-text-field v-model.number="options.barWidth" type="number" label="线条宽度" />
+                                <ui-text-field v-model.number="options.barHeight" type="number" label="条码高度" />
+                                <ui-text-field v-model.number="options.moduleSize" type="number" label="Module Size" />
+                                <ui-text-field v-model.number="options.quietZoneSize" type="number" label="Quiet Zone Modules" />
+
+                                <!-- <div class="form-horizontal">
                                     <div class="form-group">
                                         <div class="control-label col-sm-4">Quiet Zone Modules:</div>
                                         <div class="col-sm-8">
@@ -86,7 +69,7 @@
                                         x : <input v-model.number="options.posX" type="text" size="3"><br />
                                         y : <input v-model.number="options.posY" type="text" size="3"><br />
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                         <div v-if="activeTab === 'tab3'">
@@ -125,7 +108,7 @@
                 code: '12345670',
                 renderer: 'canvas',
                 type: 'ean8',
-                activeTab: 'tab1',
+                activeTab: 'tab2',
                 types: [
                     {
                         name: 'ean8',
@@ -296,6 +279,11 @@
         margin-bottom: 10px;
     }
     .config{
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        bottom: 0;
         padding: 16px;
         overflow: auto;
     }
